@@ -6,28 +6,28 @@ const options = {
     info: {
       title: 'Chatter API',
       version: '1.0.0',
-      description: 'API documentation for Chatter messaging app',
+      description: 'API documentation for Chatter messaging app'
     },
     servers: [
       {
         url: 'http://localhost:3000',
-        description: 'Local development',
-      },
+        description: 'Local development'
+      }
     ],
     tags: [
       { name: 'System', description: 'System endpoints' },
       { name: 'Auth', description: 'Authentication endpoints' },
       { name: 'Users', description: 'User endpoints' },
       { name: 'Conversations', description: 'Conversation endpoints' },
-      { name: 'Messages', description: 'Message endpoints' },
+      { name: 'Messages', description: 'Message endpoints' }
     ],
     components: {
       securitySchemes: {
         bearerAuth: {
           type: 'http',
           scheme: 'bearer',
-          bearerFormat: 'JWT',
-        },
+          bearerFormat: 'JWT'
+        }
       },
       schemas: {
         ErrorResponse: {
@@ -35,14 +35,14 @@ const options = {
           properties: {
             message: {
               type: 'string',
-              example: 'Validation failed',
-            },
-          },
-        },
-      },
-    },
+              example: 'Validation failed'
+            }
+          }
+        }
+      }
+    }
   },
-  apis: ['./src/**/*.js'],
+  apis: ['./src/**/*.js']
 }
 
 const swaggerSpec = swaggerJsdoc(options)
