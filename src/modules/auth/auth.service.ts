@@ -8,7 +8,7 @@ import type { AuthResponseData, LoginBody, RefreshTokenBody, RegisterBody } from
 
 const SALT_ROUNDS = 10
 const ACCESS_TOKEN_EXPIRES_IN: SignOptions['expiresIn'] = '30m'
-const DEFAULT_REFRESH_TOKEN_EXPIRES_IN: SignOptions['expiresIn'] = '30d'
+const DEFAULT_REFRESH_TOKEN_EXPIRES_IN: SignOptions['expiresIn'] = '10d'
 
 export class AuthService {
   private readonly authRepository: AuthRepository
