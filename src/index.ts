@@ -1,12 +1,15 @@
+import 'dotenv/config'
 import express from 'express'
 import swaggerUi from 'swagger-ui-express'
 import swaggerSpec from './config/swagger.js'
 import { ApiResponseFactory } from './types/api.js'
+import authRouter from './modules/auth/auth.route.js'
 
 const app = express()
 const PORT = process.env.PORT || 3000
 
 app.use(express.json())
+app.use('/api/v1/auth', authRouter)
 
 app.use(
   '/docs',
