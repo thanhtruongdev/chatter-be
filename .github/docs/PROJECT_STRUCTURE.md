@@ -25,55 +25,60 @@ Tài liệu này mô tả cấu trúc thư mục chuẩn cho dự án Chatter (E
 │  ├─ chatter_schema.sql
 │  └─ migrations/
 ├─ src/
-│  ├─ app.js
-│  ├─ server.js
+│  ├─ app.ts
+│  ├─ server.ts
 │  ├─ config/
-│  │  ├─ env.js
-│  │  ├─ swagger.js
-│  │  └─ logger.js
+│  │  ├─ env.ts
+│  │  ├─ swagger.ts
+│  │  └─ logger.ts
 │  ├─ modules/
 │  │  ├─ auth/
-│  │  │  ├─ auth.route.js
-│  │  │  ├─ auth.controller.js
-│  │  │  ├─ auth.service.js
-│  │  │  ├─ auth.repository.js
-│  │  │  └─ auth.validation.js
+│  │  │  ├─ auth.route.ts
+│  │  │  ├─ auth.controller.ts
+│  │  │  ├─ auth.service.ts
+│  │  │  ├─ auth.repository.ts
+│  │  │  └─ auth.validation.ts
 │  │  ├─ users/
-│  │  │  ├─ user.route.js
-│  │  │  ├─ user.controller.js
-│  │  │  ├─ user.service.js
-│  │  │  ├─ user.repository.js
-│  │  │  └─ user.validation.js
+│  │  │  ├─ user.route.ts
+│  │  │  ├─ user.controller.ts
+│  │  │  ├─ user.service.ts
+│  │  │  ├─ user.repository.ts
+│  │  │  └─ user.validation.ts
 │  │  ├─ conversations/
-│  │  │  ├─ conversation.route.js
-│  │  │  ├─ conversation.controller.js
-│  │  │  ├─ conversation.service.js
-│  │  │  ├─ conversation.repository.js
-│  │  │  └─ conversation.validation.js
+│  │  │  ├─ conversation.route.ts
+│  │  │  ├─ conversation.controller.ts
+│  │  │  ├─ conversation.service.ts
+│  │  │  ├─ conversation.repository.ts
+│  │  │  └─ conversation.validation.ts
 │  │  └─ messages/
-│  │     ├─ message.route.js
-│  │     ├─ message.controller.js
-│  │     ├─ message.service.js
-│  │     ├─ message.repository.js
-│  │     └─ message.validation.js
+│  │     ├─ message.route.ts
+│  │     ├─ message.controller.ts
+│  │     ├─ message.service.ts
+│  │     ├─ message.repository.ts
+│  │     └─ message.validation.ts
 │  ├─ middlewares/
-│  │  ├─ auth.middleware.js
-│  │  ├─ error.middleware.js
-│  │  ├─ notFound.middleware.js
-│  │  └─ rateLimit.middleware.js
+│  │  ├─ auth.middleware.ts
+│  │  ├─ error.middleware.ts
+│  │  ├─ notFound.middleware.ts
+│  │  └─ rateLimit.middleware.ts
 │  ├─ lib/
-│  │  ├─ prisma.js
-│  │  ├─ jwt.js
-│  │  └─ bcrypt.js
+│  │  ├─ prisma.ts
+│  │  ├─ jwt.ts
+│  │  └─ bcrypt.ts
+│  ├─ types/
+│  │  ├─ api-error.ts
+│  │  ├─ api-response.ts
+│  │  ├─ common.types.ts
+│  │  └─ index.ts
 │  ├─ sockets/
-│  │  ├─ index.js
+│  │  ├─ index.ts
 │  │  └─ handlers/
-│  │     ├─ message.handler.js
-│  │     └─ presence.handler.js
+│  │     ├─ message.handler.ts
+│  │     └─ presence.handler.ts
 │  ├─ utils/
-│  │  ├─ ApiError.js
-│  │  ├─ ApiResponse.js
-│  │  └─ pagination.js
+│  │  ├─ pagination.ts
+│  │  ├─ date.ts
+│  │  └─ string.ts
 │  └─ tests/
 │     ├─ unit/
 │     └─ integration/
@@ -99,9 +104,9 @@ Khu vực chứa toàn bộ tài liệu nội bộ dự án:
 
 ### 3.3 `src/config`
 Chứa cấu hình theo môi trường:
-- `env.js`: parse + validate biến môi trường.
-- `swagger.js`: OpenAPI setup.
-- `logger.js`: cấu hình logging.
+- `env.ts`: parse + validate biến môi trường.
+- `swagger.ts`: OpenAPI setup.
+- `logger.ts`: cấu hình logging.
 
 ### 3.4 `src/modules/*`
 Tổ chức theo domain nghiệp vụ (feature-first):
@@ -117,11 +122,18 @@ Middleware dùng chung: xác thực, xử lý lỗi, rate limit, not found.
 ### 3.6 `src/lib`
 Adapter cho thư viện bên ngoài (`prisma`, `jwt`, `bcrypt`) để tránh logic rải rác.
 
-### 3.7 `src/sockets`
+### 3.7 `src/types`
+Nơi định nghĩa kiểu dữ liệu dùng chung toàn dự án:
+- API contract (`api-error`, `api-response`).
+- DTO/type dùng giữa controller-service-repository.
+- Common/domain types tái sử dụng.
+
+### 3.8 `src/sockets`
 Tập trung xử lý realtime (chat events, presence).
 
-### 3.8 `src/utils`
-Helper thuần kỹ thuật, không chứa business logic.
+### 3.9 `src/utils`
+Chỉ chứa helper functions thuần kỹ thuật (format, parse, transform, date, string),
+không chứa type/data contract hoặc business logic.
 
 ---
 
@@ -133,28 +145,30 @@ Mỗi request HTTP nên đi theo chuỗi:
 Điều này giúp:
 - Test dễ hơn.
 - Thay đổi DB hoặc business logic ít ảnh hưởng toàn hệ thống.
-- Tránh “God file” ở `index.js`.
+- Tránh “God file” ở `index.ts`.
 
 ---
 
 ## 5) Mapping từ trạng thái hiện tại
 Hiện tại dự án có:
-- `src/index.js`
-- `src/prisma.js`
-- `src/config/swagger.js`
+- `src/index.ts`
+- `src/prisma.ts`
+- `src/config/swagger.ts`
 
 Khuyến nghị chuyển dần:
-1. Tách `src/index.js` thành:
-   - `src/app.js` (khởi tạo app, middleware, routes)
-   - `src/server.js` (listen cổng)
-2. Chuyển `src/prisma.js` sang `src/lib/prisma.js`.
-3. Giữ `src/config/swagger.js` và mở rộng theo module route.
+1. Tách `src/index.ts` thành:
+   - `src/app.ts` (khởi tạo app, middleware, routes)
+   - `src/server.ts` (listen cổng)
+2. Chuyển `src/prisma.ts` sang `src/lib/prisma.ts`.
+3. Giữ `src/config/swagger.ts` và mở rộng theo module route.
 4. Tạo từng module nghiệp vụ theo thứ tự: `auth` -> `users` -> `conversations` -> `messages`.
+5. Tạo `src/types` để quản lý API error/data type, giữ `src/utils` chỉ cho helper functions.
 
 ---
 
 ## 6) Quy ước đặt tên
 - File: `kebab` hoặc `dot style` nhất quán theo module (khuyến nghị: `auth.service.js`).
+- File: `kebab` hoặc `dot style` nhất quán theo module (khuyến nghị: `auth.service.ts`).
 - Class/constructor (nếu dùng): `PascalCase`.
 - Hàm/biến: `camelCase`.
 - Mỗi file chỉ nên có một trách nhiệm chính.
@@ -165,6 +179,7 @@ Khuyến nghị chuyển dần:
 - [ ] Mọi endpoint có validation.
 - [ ] Không query Prisma trực tiếp trong controller.
 - [ ] Mọi lỗi đi qua `error.middleware`.
+- [ ] Type/data contract đặt trong `src/types`, không đặt trong `src/utils`.
 - [ ] Có test integration cho luồng quan trọng.
 - [ ] Swagger luôn cập nhật cùng endpoint mới.
 - [ ] Tài liệu mới luôn đặt trong `.github/docs`.
