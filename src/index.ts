@@ -1,6 +1,7 @@
 import express from 'express'
 import swaggerUi from 'swagger-ui-express'
 import swaggerSpec from './config/swagger.js'
+import { ApiResponseFactory } from './types/api.js'
 
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -29,12 +30,22 @@ app.use(
  *             schema:
  *               type: object
  *               properties:
- *                 status:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
  *                   type: string
- *                   example: ok
+ *                   example: Health check success
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     status:
+ *                       type: string
+ *                       example: ok
  */
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok' })
+  const response = ApiResponseFactory.success('Health check success', { status: 'ok' }).toJSON()
+  res.json(response)
 })
 
 app.listen(PORT, () => {
