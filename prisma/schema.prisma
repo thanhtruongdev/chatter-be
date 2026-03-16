@@ -7,48 +7,6 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
-  id          Int          @id @default(autoincrement())
-  username    String       @unique
-  email       String       @unique
-  password    String
-  createdAt   DateTime     @default(now())
-  messages    Message[]
-  memberships RoomMember[]
-}
-
-model Room {
-  id        Int          @id @default(autoincrement())
-  name      String
-  isPrivate Boolean      @default(false)
-  createdAt DateTime     @default(now())
-  messages  Message[]
-  members   RoomMember[]
-}
-
-model RoomMember {
-  id     Int    @id @default(autoincrement())
-  userId Int
-  roomId Int
-  role   String @default("member")
-  room   Room   @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, roomId])
-}
-
-model Message {
-  id        Int      @id @default(autoincrement())
-  content   String
-  userId    Int
-  roomId    Int
-  createdAt DateTime @default(now())
-  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([roomId, createdAt])
-}
-
 model conversation_members {
   id              BigInt        @id @default(autoincrement())
   conversation_id BigInt

@@ -23,7 +23,7 @@ app.use(
  *     tags: [System]
  *     responses:
  *       200:
- *         description: Trạng thái server
+ *         description: Server status
  *         content:
  *           application/json:
  *             schema:
