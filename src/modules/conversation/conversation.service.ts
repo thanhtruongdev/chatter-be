@@ -1,4 +1,5 @@
-import type { ConversationDto, CreateConversationBody } from '../../types/conversation.js'
+import { ConversationDto } from '~/models/conversation.js'
+import type { CreateConversationBody } from '../../types/conversation.js'
 import { ConversationRepository } from './conversation.repository.js'
 
 export class ConversationService {
