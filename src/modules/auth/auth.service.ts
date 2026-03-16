@@ -88,7 +88,6 @@ export class AuthService {
     const tokens = await this.issueTokens(session.user)
 
     return {
-    //   user: this.toAuthUserDto(session.user),
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken
     }
