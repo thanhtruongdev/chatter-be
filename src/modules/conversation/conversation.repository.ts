@@ -22,7 +22,6 @@ export interface ConversationWithMembersRecord {
 		readonly joined_at: Date
 	}[]
 }
-
 export class ConversationRepository {
 	async findExistingUsersByIds(userIds: bigint[]): Promise<bigint[]> {
 		const users = await prisma.users.findMany({
@@ -98,6 +97,45 @@ export class ConversationRepository {
 			}
 
 			return createdConversation
+		})
+	}
+
+	async getConversationList(currentUserId: bigint): Promise<ConversationWithMembersRecord[]> {
+		return prisma.conversations.findMany({
+			where: {
+				deleted_at: null,
+				conversation_members: {
+					some: {
+						user_id: currentUserId,
+						deleted_at: null,
+						left_at: null
+					}
+				}
+			},
+			select: {
+				id: true,
+				type: true,
+				title: true,
+				avatar_url: true,
+				created_by: true,
+				created_at: true,
+				updated_at: true,
+				conversation_members: {
+					where: {
+						deleted_at: null,
+						left_at: null
+					},
+					select: {
+						user_id: true,
+						role: true,
+						joined_at: true
+					},
+					orderBy: {
+						joined_at: 'asc'
+					}
+				}
+			},
+			orderBy: [{ last_message_at: 'desc' }, { updated_at: 'desc' }, { id: 'desc' }]
 		})
 	}
 }

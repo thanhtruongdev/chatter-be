@@ -1,6 +1,7 @@
 import { ConversationDto } from '~/models/conversation.js'
 import type { CreateConversationBody } from '../../types/conversation.js'
 import { ConversationRepository } from './conversation.repository.js'
+import type { ConversationWithMembersRecord } from './conversation.repository.js'
 
 export class ConversationService {
 	private readonly conversationRepository: ConversationRepository
@@ -37,20 +38,14 @@ export class ConversationService {
 			]
 		)
 
-		return {
-			id: createdConversation.id.toString(),
-			type: createdConversation.type,
-			title: createdConversation.title,
-			avatarUrl: createdConversation.avatar_url,
-			createdBy: createdConversation.created_by?.toString() ?? null,
-			createdAt: createdConversation.created_at.toISOString(),
-			updatedAt: createdConversation.updated_at.toISOString(),
-			members: createdConversation.conversation_members.map((member) => ({
-				userId: member.user_id.toString(),
-				role: member.role,
-				joinedAt: member.joined_at.toISOString()
-			}))
-		}
+		return this.toConversationDto(createdConversation)
+	}
+
+	async getConversationList(currentUserId: string): Promise<ConversationDto[]> {
+		const userId = this.parseUserId(currentUserId)
+		const conversations = await this.conversationRepository.getConversationList(userId)
+
+		return conversations.map((conversation) => this.toConversationDto(conversation))
 	}
 
 	private normalizeMemberIds(memberIds: string[]): bigint[] {
@@ -64,5 +59,22 @@ export class ConversationService {
 		}
 
 		return BigInt(userId)
+	}
+
+	private toConversationDto(conversation: ConversationWithMembersRecord): ConversationDto {
+		return {
+			id: conversation.id.toString(),
+			type: conversation.type,
+			title: conversation.title,
+			avatarUrl: conversation.avatar_url,
+			createdBy: conversation.created_by?.toString() ?? null,
+			createdAt: conversation.created_at.toISOString(),
+			updatedAt: conversation.updated_at.toISOString(),
+			members: conversation.conversation_members.map((member) => ({
+				userId: member.user_id.toString(),
+				role: member.role,
+				joinedAt: member.joined_at.toISOString()
+			}))
+		}
 	}
 }

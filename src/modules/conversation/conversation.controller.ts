@@ -42,6 +42,22 @@ export class ConversationController {
 		}
 	}
 
+	getConversationList = async (req: Request, res: Response): Promise<Response> => {
+		if (!req.user) {
+			return res.status(401).json(ApiResponseFactory.error('Unauthorized').toJSON())
+		}
+
+		try {
+			const data = await this.conversationService.getConversationList(req.user.userId)
+			return res.status(200).json(ApiResponseFactory.success('Get conversation list success', data).toJSON())
+		} catch (error: unknown) {
+			const message = this.getErrorMessage(error)
+			const statusCode = this.getStatusCodeByMessage(message)
+
+			return res.status(statusCode).json(ApiResponseFactory.error(message).toJSON())
+		}
+	}
+
 	private getErrorMessage(error: unknown): string {
 		if (error instanceof Error) {
 			return error.message

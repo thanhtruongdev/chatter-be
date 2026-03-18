@@ -45,4 +45,20 @@ const conversationController = new ConversationController()
  */
 conversationRouter.post('/', authenticate, conversationController.createConversation)
 
+/**
+ * @swagger
+ * /api/v1/conversation:
+ *   get:
+ *     summary: Get conversation list of current user
+ *     tags: [Conversations]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Get conversation list success
+ *       401:
+ *         description: Unauthorized
+ */
+conversationRouter.get('/', authenticate, conversationController.getConversationList)
+
 export default conversationRouter
