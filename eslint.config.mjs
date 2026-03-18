@@ -27,7 +27,7 @@ export default defineConfig([
 					trailingComma: 'none',
 					tabWidth: 4,
 					endOfLine: 'auto',
-					useTabs: true,
+					useTabs: false,
 					singleQuote: true,
 					printWidth: 120,
 					jsxSingleQuote: true

@@ -1,7 +1,9 @@
 # Chatter Project Documentation
 
 ## 1) Mục tiêu tài liệu
+
 Tài liệu này mô tả cấu trúc thư mục chuẩn cho dự án Chatter (Express + Prisma + Swagger), theo định hướng:
+
 - Dễ mở rộng theo tính năng.
 - Dễ bảo trì khi team lớn dần.
 - Tách rõ vai trò giữa route, business logic, data access.
@@ -91,25 +93,32 @@ Tài liệu này mô tả cấu trúc thư mục chuẩn cho dự án Chatter (E
 ## 3) Ý nghĩa từng khu vực
 
 ### 3.1 `.github/docs`
+
 Khu vực chứa toàn bộ tài liệu nội bộ dự án:
+
 - Kiến trúc hệ thống.
 - Chuẩn API.
 - Quy ước code style.
 - Hướng dẫn deploy / vận hành.
 
 ### 3.2 `prisma`
+
 - `schema.prisma`: schema cho Prisma Client.
 - `chatter_schema.sql`: SQL chuẩn PostgreSQL.
 - `migrations`: lịch sử migration để deploy nhất quán.
 
 ### 3.3 `src/config`
+
 Chứa cấu hình theo môi trường:
+
 - `env.ts`: parse + validate biến môi trường.
 - `swagger.ts`: OpenAPI setup.
 - `logger.ts`: cấu hình logging.
 
 ### 3.4 `src/modules/*`
+
 Tổ chức theo domain nghiệp vụ (feature-first):
+
 - `*.route.js`: định nghĩa endpoint.
 - `*.controller.js`: nhận request/response.
 - `*.service.js`: business logic.
@@ -117,32 +126,40 @@ Tổ chức theo domain nghiệp vụ (feature-first):
 - `*.validation.js`: validate input (Zod).
 
 ### 3.5 `src/middlewares`
+
 Middleware dùng chung: xác thực, xử lý lỗi, rate limit, not found.
 
 ### 3.6 `src/lib`
+
 Adapter cho thư viện bên ngoài (`prisma`, `jwt`, `bcrypt`) để tránh logic rải rác.
 
 ### 3.7 `src/types`
+
 Nơi định nghĩa kiểu dữ liệu dùng chung toàn dự án:
+
 - API contract (`api-error`, `api-response`).
 - DTO/type dùng giữa controller-service-repository.
 - Common/domain types tái sử dụng.
 
 ### 3.8 `src/sockets`
+
 Tập trung xử lý realtime (chat events, presence).
 
 ### 3.9 `src/utils`
+
 Chỉ chứa helper functions thuần kỹ thuật (format, parse, transform, date, string),
 không chứa type/data contract hoặc business logic.
 
 ---
 
 ## 4) Luồng xử lý chuẩn
+
 Mỗi request HTTP nên đi theo chuỗi:
 
 `Route -> Validation -> Controller -> Service -> Repository -> Prisma`
 
 Điều này giúp:
+
 - Test dễ hơn.
 - Thay đổi DB hoặc business logic ít ảnh hưởng toàn hệ thống.
 - Tránh “God file” ở `index.ts`.
@@ -150,15 +167,18 @@ Mỗi request HTTP nên đi theo chuỗi:
 ---
 
 ## 5) Mapping từ trạng thái hiện tại
+
 Hiện tại dự án có:
+
 - `src/index.ts`
 - `src/prisma.ts`
 - `src/config/swagger.ts`
 
 Khuyến nghị chuyển dần:
+
 1. Tách `src/index.ts` thành:
-   - `src/app.ts` (khởi tạo app, middleware, routes)
-   - `src/server.ts` (listen cổng)
+    - `src/app.ts` (khởi tạo app, middleware, routes)
+    - `src/server.ts` (listen cổng)
 2. Chuyển `src/prisma.ts` sang `src/lib/prisma.ts`.
 3. Giữ `src/config/swagger.ts` và mở rộng theo module route.
 4. Tạo từng module nghiệp vụ theo thứ tự: `auth` -> `users` -> `conversations` -> `messages`.
@@ -167,6 +187,7 @@ Khuyến nghị chuyển dần:
 ---
 
 ## 6) Quy ước đặt tên
+
 - File: `kebab` hoặc `dot style` nhất quán theo module (khuyến nghị: `auth.service.js`).
 - File: `kebab` hoặc `dot style` nhất quán theo module (khuyến nghị: `auth.service.ts`).
 - Class/constructor (nếu dùng): `PascalCase`.
@@ -176,6 +197,7 @@ Khuyến nghị chuyển dần:
 ---
 
 ## 7) Checklist maintain
+
 - [ ] Mọi endpoint có validation.
 - [ ] Không query Prisma trực tiếp trong controller.
 - [ ] Mọi lỗi đi qua `error.middleware`.
@@ -187,9 +209,25 @@ Khuyến nghị chuyển dần:
 ---
 
 ## 8) Danh sách tài liệu nên có tiếp theo
+
 Tạo thêm trong `.github/docs`:
+
 - `API_GUIDELINES.md`: chuẩn request/response/error.
 - `DATABASE.md`: ERD + indexing strategy + migration policy.
 - `AUTH_FLOW.md`: JWT refresh token, session, revoke.
 - `DEPLOYMENT.md`: môi trường, biến env, CI/CD.
 
+---
+
+## 9) Tài liệu Realtime đã bổ sung
+
+Để chuẩn hóa Socket.IO flow theo hiện trạng dự án, đã bổ sung:
+
+- `SOCKET_IO_FLOW_SPEC.md`: đặc tả flow realtime chuẩn, event contract, payload/ack/error và test matrix.
+- `SOCKET_IO_IMPLEMENTATION_GUIDE.md`: hướng dẫn triển khai kỹ thuật theo phase, checklist bảo mật/vận hành và migration notes.
+
+Khuyến nghị khi implement realtime:
+
+1. Đọc `SOCKET_IO_FLOW_SPEC.md` trước để thống nhất contract giữa FE/BE/QA.
+2. Triển khai theo checklist trong `SOCKET_IO_IMPLEMENTATION_GUIDE.md`.
+3. Cập nhật lại roadmap khi hoàn thành từng phase realtime.

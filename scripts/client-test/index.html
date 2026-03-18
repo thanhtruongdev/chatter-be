@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Chatter Realtime Client Test</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+			rel="stylesheet"
+		/>
+		<link rel="stylesheet" href="./styles.css" />
+	</head>
+
+	<body>
+		<div class="page-bg"></div>
+		<main class="layout">
+			<header class="topbar">
+				<div>
+					<h1>Chatter Socket.IO Client Test</h1>
+					<p>Two simulated clients for connect, auth, join, history, send, broadcast, and disconnect.</p>
+				</div>
+				<div class="badges">
+					<span class="badge">Event Contract Test</span>
+					<span class="badge">Realtime Integration</span>
+				</div>
+			</header>
+
+			<section class="global-panel card">
+				<h2>Global Config</h2>
+				<div class="grid two">
+					<label>
+						API URL
+						<input id="api-url" value="http://localhost:3000" />
+					</label>
+					<label>
+						API Prefix
+						<input id="api-prefix" value="/api/v1" />
+					</label>
+					<label>
+						Socket URL
+						<input id="socket-url" value="http://localhost:3001" />
+					</label>
+					<label>
+						Socket Path
+						<input id="socket-path" value="/socket.io" />
+					</label>
+				</div>
+				<div class="actions">
+					<button id="sync-config" class="btn secondary">Apply Config To Both Clients</button>
+					<button id="clear-all-logs" class="btn ghost">Clear All Logs</button>
+				</div>
+			</section>
+
+			<section class="clients">
+				<article class="card client" data-client="A">
+					<h2>Client A</h2>
+					<section class="client-section auth-section">
+						<h3>Login</h3>
+						<div class="grid two">
+							<label>
+								Email or Username
+								<input id="login-id-a" placeholder="john@example.com or johndoe" />
+							</label>
+							<label>
+								Password
+								<input id="login-password-a" type="password" placeholder="Secret123" />
+							</label>
+						</div>
+
+						<div class="actions wrap">
+							<button id="login-a" class="btn">Login</button>
+							<button id="logout-a" class="btn ghost">Logout</button>
+						</div>
+
+						<div class="session-box" id="session-box-a">
+							<div><strong>Session</strong></div>
+							<div id="session-user-a">User: not logged in</div>
+							<div id="session-token-a">Token: none</div>
+						</div>
+					</section>
+
+					<fieldset id="ops-a" class="client-section ops-section" disabled>
+						<legend>Realtime Operations (requires login)</legend>
+						<div class="grid two">
+							<label>
+								Conversation ID
+								<input id="conversation-id-a" placeholder="e.g. 1" />
+							</label>
+							<label>
+								History Limit
+								<input id="history-limit-a" type="number" value="30" min="1" max="100" />
+							</label>
+							<label>
+								Message Content
+								<input id="message-content-a" placeholder="hello from client A" />
+							</label>
+						</div>
+
+						<div class="actions wrap">
+							<button id="fetch-conversations-a" class="btn secondary">GET /conversation (Auth)</button>
+							<button id="connect-a" class="btn">Connect (Auto Token)</button>
+							<button id="disconnect-a" class="btn ghost">Disconnect</button>
+							<button id="auth-login-a" class="btn secondary">Emit auth:login (Auto Token)</button>
+							<button id="join-a" class="btn secondary">Emit conversation:join</button>
+							<button id="typing-on-a" class="btn secondary">Emit message:typing (ON)</button>
+							<button id="typing-off-a" class="btn ghost">Emit message:typing (OFF)</button>
+							<button id="send-a" class="btn secondary">Emit message:send</button>
+							<button id="send-invalid-a" class="btn danger">Send Invalid Text Payload</button>
+						</div>
+
+						<div class="status" id="status-a">Status: idle</div>
+						<div class="typing-state" id="typing-state-a">Typing: nobody</div>
+						<div class="messages" id="messages-a"></div>
+						<pre class="log" id="log-a"></pre>
+					</fieldset>
+				</article>
+
+				<article class="card client" data-client="B">
+					<h2>Client B</h2>
+					<section class="client-section auth-section">
+						<h3>Login</h3>
+						<div class="grid two">
+							<label>
+								Email or Username
+								<input id="login-id-b" placeholder="john@example.com or johndoe" />
+							</label>
+							<label>
+								Password
+								<input id="login-password-b" type="password" placeholder="Secret123" />
+							</label>
+						</div>
+
+						<div class="actions wrap">
+							<button id="login-b" class="btn">Login</button>
+							<button id="logout-b" class="btn ghost">Logout</button>
+						</div>
+
+						<div class="session-box" id="session-box-b">
+							<div><strong>Session</strong></div>
+							<div id="session-user-b">User: not logged in</div>
+							<div id="session-token-b">Token: none</div>
+						</div>
+					</section>
+
+					<fieldset id="ops-b" class="client-section ops-section" disabled>
+						<legend>Realtime Operations (requires login)</legend>
+						<div class="grid two">
+							<label>
+								Conversation ID
+								<input id="conversation-id-b" placeholder="e.g. 1" />
+							</label>
+							<label>
+								History Limit
+								<input id="history-limit-b" type="number" value="30" min="1" max="100" />
+							</label>
+							<label>
+								Message Content
+								<input id="message-content-b" placeholder="hello from client B" />
+							</label>
+						</div>
+
+						<div class="actions wrap">
+							<button id="fetch-conversations-b" class="btn secondary">GET /conversation (Auth)</button>
+							<button id="connect-b" class="btn">Connect (Auto Token)</button>
+							<button id="disconnect-b" class="btn ghost">Disconnect</button>
+							<button id="auth-login-b" class="btn secondary">Emit auth:login (Auto Token)</button>
+							<button id="join-b" class="btn secondary">Emit conversation:join</button>
+							<button id="typing-on-b" class="btn secondary">Emit message:typing (ON)</button>
+							<button id="typing-off-b" class="btn ghost">Emit message:typing (OFF)</button>
+							<button id="send-b" class="btn secondary">Emit message:send</button>
+							<button id="send-invalid-b" class="btn danger">Send Invalid Text Payload</button>
+						</div>
+
+						<div class="status" id="status-b">Status: idle</div>
+						<div class="typing-state" id="typing-state-b">Typing: nobody</div>
+						<div class="messages" id="messages-b"></div>
+						<pre class="log" id="log-b"></pre>
+					</fieldset>
+				</article>
+			</section>
+
+			<section class="card quick-test">
+				<h2>Quick End-to-End Test</h2>
+				<p>Requires both clients in same conversation with valid tokens.</p>
+				<div class="actions">
+					<button id="run-e2e" class="btn">Run Connect + Join + Send A -> Broadcast B</button>
+				</div>
+				<pre class="log" id="quick-log"></pre>
+			</section>
+		</main>
+
+		<script src="https://cdn.socket.io/4.8.3/socket.io.min.js"></script>
+		<script src="./app.js"></script>
+	</body>
+</html>
